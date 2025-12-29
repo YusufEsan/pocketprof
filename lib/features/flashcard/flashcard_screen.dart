@@ -1,4 +1,5 @@
 import 'dart:math' as math;
+import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:pocket_prof/core/theme/app_theme.dart';
 import 'package:pocket_prof/models/flashcard_model.dart';
@@ -366,6 +367,7 @@ class _ModernFlipCardState extends State<_ModernFlipCard> with SingleTickerProvi
   late AnimationController _controller;
   late Animation<double> _animation;
   bool _showBack = false;
+  bool _showAnswer = false; // Censorship for the back side
   
   @override
   void initState() {
@@ -504,6 +506,8 @@ class _ModernFlipCardState extends State<_ModernFlipCard> with SingleTickerProvi
   }
   
   Widget _buildBack() {
+    final bool isBlurred = !_showAnswer;
+    
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(32),
@@ -522,27 +526,63 @@ class _ModernFlipCardState extends State<_ModernFlipCard> with SingleTickerProvi
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          // Check icon
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              gradient: const LinearGradient(
-                colors: [Colors.purple, Colors.deepPurple],
+          // Check icon and Toggle button
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  gradient: const LinearGradient(
+                    colors: [Colors.purple, Colors.deepPurple],
+                  ),
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: const Icon(Icons.lightbulb, color: Colors.white, size: 24),
               ),
-              borderRadius: BorderRadius.circular(16),
-            ),
-            child: const Icon(Icons.lightbulb, color: Colors.white, size: 24),
+              IconButton(
+                onPressed: () => setState(() => _showAnswer = !_showAnswer),
+                icon: Icon(
+                  _showAnswer ? Icons.visibility : Icons.visibility_off,
+                  color: Colors.purple,
+                ),
+                tooltip: _showAnswer ? 'Cevabı Gizle' : 'Cevabı Göster',
+              ),
+            ],
           ),
           const SizedBox(height: 24),
           
-          // Answer text
-          Text(
-            widget.card.back,
-            style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-              fontSize: 18,
-              height: 1.6,
-            ),
-            textAlign: TextAlign.center,
+          // Answer text with Blur effect
+          Stack(
+            alignment: Alignment.center,
+            children: [
+              ImageFiltered(
+                imageFilter: ui.ImageFilter.blur(
+                  sigmaX: isBlurred ? 8.0 : 0.0,
+                  sigmaY: isBlurred ? 8.0 : 0.0,
+                ),
+                child: Text(
+                  widget.card.back,
+                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                    fontSize: 18,
+                    height: 1.6,
+                    color: isBlurred ? Colors.transparent : null,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+              if (isBlurred)
+                ElevatedButton.icon(
+                  onPressed: () => setState(() => _showAnswer = true),
+                  icon: const Icon(Icons.visibility),
+                  label: const Text('Cevabı Gör'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.purple,
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                  ),
+                ),
+            ],
           ),
           
           // Hint

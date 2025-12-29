@@ -47,6 +47,14 @@ class _MessageBubbleState extends State<MessageBubble>
     r'💡\s*\*?\*?Açıklama:?\*?\*?\s*.+',
     caseSensitive: false,
   );
+  static final _flashcardBackRegex = RegExp(
+    r'\*\*ARKA\s*YÜZ.*?:\*\*\s*.+',
+    caseSensitive: false,
+  );
+  static final _hintRegex = RegExp(
+    r'🔗\s*\*?\*?İpucu:?\*?\*?\s*.+',
+    caseSensitive: false,
+  );
   static final _heading2Regex = RegExp(r'^##\s', multiLine: true);
   static final _heading3Regex = RegExp(r'^###\s', multiLine: true);
   static final _boldItalicRegex = RegExp(r'(\*\*|\*)(.+?)\1');
@@ -344,18 +352,32 @@ class _MessageBubbleState extends State<MessageBubble>
 
     String content = currentContent;
 
-    // If quiz mode and answers should be hidden, mask the correct answers
-    if (widget.message.mode == 'quiz' && !_showAnswers) {
-      // Hide ✅ **Doğru Cevap:** X lines
-      content = content.replaceAllMapped(
-        _quizAnswerRegex,
-        (match) => '✅ **Doğru Cevap:** •••',
-      );
-      // Hide 💡 **Açıklama:** lines
-      content = content.replaceAllMapped(
-        _explanationRegex,
-        (match) => '💡 **Açıklama:** ••••••••••••••••',
-      );
+    // If quiz/flashcard mode and answers should be hidden, mask the contents
+    if ((widget.message.mode == 'quiz' || widget.message.mode == 'flashcard') && !_showAnswers) {
+      if (widget.message.mode == 'quiz') {
+        // Hide ✅ **Doğru Cevap:** X lines
+        content = content.replaceAllMapped(
+          _quizAnswerRegex,
+          (match) => '✅ **Doğru Cevap:** •••',
+        );
+        // Hide 💡 **Açıklama:** lines
+        content = content.replaceAllMapped(
+          _explanationRegex,
+          (match) => '💡 **Açıklama:** ••••••••••••••••',
+        );
+      } else {
+        // Flashcard mode
+        // Hide **ARKA YÜZ:** lines
+        content = content.replaceAllMapped(
+          _flashcardBackRegex,
+          (match) => '**ARKA YÜZ:** ••••••••••••••••',
+        );
+        // Hide 🔗 **İpucu:** lines
+        content = content.replaceAllMapped(
+          _hintRegex,
+          (match) => '🔗 **İpucu:** ••••••',
+        );
+      }
     }
 
     final lines = content.split('\n');
@@ -646,8 +668,8 @@ class _MessageBubbleState extends State<MessageBubble>
                 );
               },
             ),
-            // Answer visibility toggle for quiz
-            if (isQuizMode) ...[
+            // Answer visibility toggle
+            if (isQuizMode || isFlashcardMode) ...[
               const SizedBox(width: 8),
               _buildActionButton(
                 icon: _showAnswers ? Icons.visibility : Icons.visibility_off,

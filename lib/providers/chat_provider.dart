@@ -299,10 +299,29 @@ class ChatNotifier extends StateNotifier<ChatState> {
       var lastUpdate = Duration.zero;
       var pendingContent = '';
 
+      // Check if we need to filter conversation history due to mode change
+      // Only include messages that match the current mode to prevent format confusion
+      List<Map<String, String>> filteredHistory = [];
+      final currentMode = state.currentMode;
+      
+      // If quiz or flashcard mode, don't include previous AI responses from different modes
+      if (currentMode == 'quiz' || currentMode == 'flashcard') {
+        for (final msg in state.messages.take(10)) {
+          if (msg.isUser) {
+            filteredHistory.add({'role': 'user', 'content': msg.content});
+          } else if (msg.mode == currentMode) {
+            // Only include AI responses from the same mode
+            filteredHistory.add({'role': 'assistant', 'content': msg.content});
+          }
+        }
+      } else {
+        filteredHistory = state.conversationHistory.take(10).toList();
+      }
+
       await for (final chunk in _llmService.streamMessage(
         userMessage: userMessage.fullContent,
         mode: state.currentMode,
-        conversationHistory: state.conversationHistory.take(10).toList(),
+        conversationHistory: filteredHistory,
         questionCount: questionCount,
       )) {
         // Safety check: if user switched sessions or cleared, STOP streaming/updating

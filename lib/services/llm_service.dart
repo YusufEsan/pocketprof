@@ -41,6 +41,15 @@ class LLMService {
           "\n\n🚨 ÇOK KRİTİK TALİMAT: Tam olarak $questionCount adet ${mode == 'quiz' ? 'soru' : 'flashcard'} oluşturmalısın. Kesinlikle ne bir eksik ne bir fazla olsun. Toplam sayı TAM OLARAK $questionCount OLMALIDIR. Eğer senden $questionCount adet istenmişse, $questionCount sayısından fazla ${mode == 'quiz' ? 'soru' : 'flashcard'} yazma.";
     }
 
+    // Add strong mode emphasis to prevent format confusion
+    final modeNames = {
+      'quiz': 'SINAV SORUSU (A, B, C, D şıklı çoktan seçmeli)',
+      'flashcard': 'FLASHCARD (ÖN YÜZ / ARKA YÜZ formatında)',
+      'explain': 'KONU ANLATIMI',
+      'summary': 'ÖZET',
+    };
+    prompt += "\n\n⚠️ ÖNEMLİ: Şu an '${modeNames[mode] ?? mode}' modundasın. Önceki mesajlarda farklı bir format kullanılmış olsa bile, SEN SADECE bu modun formatında cevap ver. Başka format KULLANMA.";
+
     prompt +=
         "\n\nÖNEMLİ: Sana birden fazla kaynak/dosya içeriği verilmişse, lütfen TÜM kaynakları dikkatle incele ve yanıtını tüm bu bilgileri harmanlayarak oluştur. Sadece bir kaynağa odaklanma.";
 

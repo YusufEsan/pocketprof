@@ -156,7 +156,7 @@ class FlashcardParser {
     bool changed = true;
     while (changed) {
       changed = false;
-      final symbols = ['**', '*', '_', ':', '💭', '❓', '✅', '💡', '🔗', '#', '-', '(', ')', '.', ' ', '🗓️', '🎴'];
+      final symbols = ['**', '*', '_', ':', '💭', '❓', '✅', '💡', '🔗', '#', '-', '.', ' ', '🗓️', '🎴'];
       for (final s in symbols) {
         if (result.startsWith(s)) {
           result = result.substring(s.length).trim();

@@ -160,11 +160,13 @@ class StorageService {
         .where((key) => key.toString().startsWith('$chatId:'))
         .map((key) => Map<String, dynamic>.from(_messagesBox.get(key)))
         .toList()
-      ..sort(
-        (a, b) => (a['timestamp'] as int? ?? 0).compareTo(
-          b['timestamp'] as int? ?? 0,
-        ),
-      );
+      ..sort((a, b) {
+        final timeA = a['timestamp'] as int? ?? 0;
+        final timeB = b['timestamp'] as int? ?? 0;
+        if (timeA != timeB) return timeA.compareTo(timeB);
+        // Tie-breaker: use ID to ensure stable sort if timestamps are identical
+        return (a['id'] as String? ?? '').compareTo(b['id'] as String? ?? '');
+      });
   }
 
   // ===== General =====

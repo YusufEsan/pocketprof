@@ -167,14 +167,16 @@ class QuizParser {
 
     if (allOptionMatches.isEmpty) return null;
 
-    // Question text cleanup
+    // Question text cleanup - remove common difficulty markers like [Zorluk: ...], (Kolay), **(Zor)** etc.
     String questionText = block
         .substring(0, allOptionMatches.first.start)
         .replaceAll(
-          RegExp(r'[\[\(]?Zorluk:?\s*(Kolay|Orta|Zor)[\]\)]?', caseSensitive: false),
+          RegExp(r'\**\s*[\(\[]?\s*(?:Zorluk:?\s*)?(?:Kolay|Orta|Zor)\s*[\]\)]?\s*\**', caseSensitive: false),
           '',
         )
         .trim();
+    
+    // Final cleanup of any lingering labels (e.g., "Soru 1:")
     questionText = _cleanText(questionText);
 
     // 4. Extract options
@@ -266,7 +268,7 @@ class QuizParser {
 
     result = result.replaceFirst(labelPattern, '').trim();
 
-    final prefixesToRemove = [
+    final symbolsToRemove = [
       '**',
       '*',
       '_',
@@ -276,8 +278,8 @@ class QuizParser {
       '✅',
       '💡',
       '🔗',
-      '(',
-      ')',
+      '#',
+      '-',
       '.',
       ' ',
       '🗓️',
@@ -287,13 +289,13 @@ class QuizParser {
     bool changed = true;
     while (changed) {
       changed = false;
-      for (final prefix in prefixesToRemove) {
-        if (result.startsWith(prefix)) {
-          result = result.substring(prefix.length).trim();
+      for (final symbol in symbolsToRemove) {
+        if (result.startsWith(symbol)) {
+          result = result.substring(symbol.length).trim();
           changed = true;
         }
-        if (result.endsWith(prefix)) {
-          result = result.substring(0, result.length - prefix.length).trim();
+        if (result.endsWith(symbol)) {
+          result = result.substring(0, result.length - symbol.length).trim();
           changed = true;
         }
       }

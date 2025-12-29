@@ -286,7 +286,8 @@ class ChatNotifier extends StateNotifier<ChatState> {
         isUser: false,
         mode: state.currentMode,
         questionCount: questionCount,
-        timestamp: DateTime.now(),
+        // Ensure assistant message is always "after" user message in sorting
+        timestamp: DateTime.now().add(const Duration(milliseconds: 10)),
       );
 
       state = state.copyWith(

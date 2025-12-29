@@ -24,11 +24,23 @@ class FlashcardParser {
     
     // 2. Identify card blocks
     final cardStartPattern = RegExp(
-      r'(?:^|\n)(?:###?\s*)?(?:🎴?\s*)?(?:Kart\s*)?(\d+)[:.)]?\s*',
+      r'(?:^|\n)(?:[\#\*\-\s\d\w\.]+)?(?:🎴?\s*)?(?:Kart|Card)\s*(\d+)[:.)]?\s*',
       caseSensitive: false,
+      multiLine: true,
     );
     
-    final matches = cardStartPattern.allMatches(cleanContent).toList();
+    var matches = cardStartPattern.allMatches(cleanContent).toList();
+    
+    // Fallback: If no "Kart" markers, try just numbers at start of lines
+    if (matches.isEmpty) {
+      final fallbackStart = RegExp(
+        r'(?:^|\n)\s*(?:\*\*|[\#\-\s])*(\d+)[\.)\-:]\s+',
+        multiLine: true,
+      );
+      matches = fallbackStart.allMatches(cleanContent).toList();
+    }
+    
+    matches.sort((a, b) => a.start.compareTo(b.start));
     
     for (int i = 0; i < matches.length; i++) {
       final match = matches[i];

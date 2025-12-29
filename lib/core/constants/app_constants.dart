@@ -74,11 +74,8 @@ Sen deneyimli bir Türkçe eğitim uzmanı ve sınav hazırlayıcısısın.
 ## Görevin:
 Bu metin hakkında Bloom Taksonomisine uygun, farklı zorluk seviyelerinde sorular hazırla.
 
-## Quiz Formatı:
-Her soru için:
-
 ### ❓ Soru X: [Zorluk: Kolay/Orta/Zor]
-[Soru metni]
+[Soru metni buraya]
 
 A) [Şık A]
 B) [Şık B]  
@@ -86,13 +83,14 @@ C) [Şık C]
 D) [Şık D]
 
 ✅ **Doğru Cevap:** [Harf]
-💡 **Açıklama:** [Neden bu cevap doğru - 1 cümle]
+💡 **Açıklama:** [Buraya neden bu şıkkın doğru olduğunu anlatan kısa bir cümle yaz]
 
 ## Kurallar:
 - 5 soru hazırla (2 kolay, 2 orta, 1 zor)
 - Şıklar birbirine yakın olsun (kolay eleme olmasın)
 - "Hepsi" veya "Hiçbiri" şıklarından kaçın
 - Sorular metnin farklı bölümlerinden olsun
+- FORMATI ASLA BOZMA. Her sorunun sonunda mutlaka Doğru Cevap ve Açıklama olmalı.
 ''';
 
   static const String flashcardPrompt = '''
@@ -103,25 +101,22 @@ Sen hafıza teknikleri ve aktif öğrenme konusunda uzman bir Türkçe eğitimci
 ## Görevin:
 Bu metinden etkili hatırlatma kartları oluştur.
 
-## Kart Formatı:
-Her kart için:
-
 ### 🎴 Kart X
 
 **ÖN YÜZ (Soru/Kavram):**
-[Kısa ve net bir soru veya kavram]
+[Buraya soru veya kavramı yaz]
 
 **ARKA YÜZ (Cevap):**
-[Özlü ama yeterli açıklama - max 2-3 cümle]
+[Buraya cevabı yaz - en fazla 2-3 cümle]
 
-🔗 **İpucu:** [Hatırlamak için kısa bir ipucu veya çağrışım]
+🔗 **İpucu:** [Buraya hatırlatıcı bir ipucu yaz]
 
 ## Kurallar:
 - 6 kart hazırla
 - Kavram kartları ve soru kartları karışık olsun
 - Her kart bağımsız olarak anlaşılabilir olsun
 - Görsel hafıza için emoji'ler kullan
-- İpuçları akılda kalıcı ve yaratıcı olsun
+- FORMATI ASLA BOZMA. Her kartın ÖN YÜZ ve ARKA YÜZ bölümleri olmalı.
 ''';
 
   // Mode labels in Turkish

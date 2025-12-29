@@ -78,24 +78,34 @@ class QuizParser {
     cleanContent = cleanContent.replaceAll('```', '');
 
     // 2. Identify question blocks
-    // Pattern to find the start of a question
+    // More flexible pattern to find question starts
     final questionStartPattern = RegExp(
-      r'(?:^|\n)(?:[\#\*\-\s]*)(?:❓?\s*)?(?:Soru\s*)?(\d+)[:.)]?\s*',
+      r'(?:^|\n)(?:[\#\*\-\s\d\w\.]+)?(?:❓?\s*)?(?:Soru|Question)\s*(\d+)[:.)]?\s*',
       caseSensitive: false,
       multiLine: true,
     );
 
-    final matches = questionStartPattern.allMatches(cleanContent).toList();
+    var matches = questionStartPattern.allMatches(cleanContent).toList();
 
-    // Fallback: if no "Soru" markers, try just numbers at start of lines
+    // Fallback 1: Try just numbers at start of lines e.g. "1. ", "1) ", "1: ", "1- "
     if (matches.isEmpty) {
       final fallbackStart = RegExp(
-        r'(?:^|\n)(?:\*\*|\s)*(\d+)[\.)]\s+',
+        r'(?:^|\n)\s*(?:\*\*|[\#\-\s])*(\d+)[\.)\-:]\s+',
         multiLine: true,
       );
-      matches.addAll(fallbackStart.allMatches(cleanContent));
-      matches.sort((a, b) => a.start.compareTo(b.start));
+      matches = fallbackStart.allMatches(cleanContent).toList();
     }
+    
+    // Fallback 2: Try "### 1" or "## 1"
+    if (matches.isEmpty) {
+      final headerStart = RegExp(
+        r'(?:^|\n)\s*#{1,6}\s*(\d+)\s*',
+        multiLine: true,
+      );
+      matches = headerStart.allMatches(cleanContent).toList();
+    }
+
+    matches.sort((a, b) => a.start.compareTo(b.start));
 
     for (int i = 0; i < matches.length; i++) {
       final match = matches[i];
@@ -128,8 +138,12 @@ class QuizParser {
     ).firstMatch(block);
     final difficulty = difficultyMatch?.group(1) ?? 'Orta';
 
-    // 2. Options location
-    final optionPattern = RegExp(r'(?:^|\n)\s*([A-D])[\.)\)]', multiLine: true);
+    // 2. Options location - support A), A., A-, (A)
+    final optionPattern = RegExp(
+      r'(?:^|\n)\s*[\*\-\s]*\(?([A-D])[\.)\-\s]', 
+      caseSensitive: false, 
+      multiLine: true
+    );
     final allOptionMatches = optionPattern.allMatches(block).toList();
 
     if (allOptionMatches.isEmpty) return null;
@@ -138,7 +152,7 @@ class QuizParser {
     String questionText = block
         .substring(0, allOptionMatches.first.start)
         .replaceAll(
-          RegExp(r'\[?Zorluk:?\s*(Kolay|Orta|Zor)\]?', caseSensitive: false),
+          RegExp(r'[\[\(]?Zorluk:?\s*(Kolay|Orta|Zor)[\]\)]?', caseSensitive: false),
           '',
         )
         .trim();
@@ -177,26 +191,23 @@ class QuizParser {
     String correctAnswer = '';
     // Priority 1: Explicit markers (Doğru Cevap, etc)
     final explicitMatch = RegExp(
-      r'(?:✅|Doğru Cevap|Correct Answer)[:\s\*-]*([A-D])(?!\w)',
+      r'(?:✅|Doğru\s*Cevap|Correct\s*Answer|Cevap|Answer|Doğru)[:\s\*-]*\s*([A-D])(?!\w)',
       caseSensitive: false,
     ).firstMatch(block);
 
     if (explicitMatch != null) {
-      // Prioritize explicit "Doğru Cevap: X"
       correctAnswer = explicitMatch.group(1)!.toUpperCase();
     } else {
-      // Priority 2: Generic "Cevap: X" - be careful not to match random text
-      final genericMatch = RegExp(
-        r'(?:Cevap|Answer)[:\s\*-]*([A-D])(?!\w)',
-        caseSensitive: false,
-      ).firstMatch(block);
-      if (genericMatch != null) {
-        correctAnswer = genericMatch.group(1)!.toUpperCase();
-      } else if (block.contains(RegExp(r'\*\*([A-D])\)\*\*'))) {
-        // Priority 3: Bolded option e.g. **A)**
-        correctAnswer = RegExp(
-          r'\*\*([A-D])\)\*\*',
-        ).firstMatch(block)!.group(1)!;
+      // Priority 2: Look for bolded letter e.g. **A**
+      final boldMatch = RegExp(r'\*\*([A-D])\*\*').firstMatch(block);
+      if (boldMatch != null) {
+        correctAnswer = boldMatch.group(1)!.toUpperCase();
+      } else {
+        // Priority 3: Look for something like (B) in the text
+        final parenMatch = RegExp(r'[\(\[]([A-D])[\]\)]').firstMatch(block);
+        if (parenMatch != null) {
+          correctAnswer = parenMatch.group(1)!.toUpperCase();
+        }
       }
     }
 

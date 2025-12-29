@@ -104434,21 +104434,18 @@ if(m!==0)B.b.H(o,A.b([A.eu(A.bcn(new A.aDq(i),m,B.qG,B.at,new A.aDr()),44,h)],p)
 if(s){m=A.b([i.Uw(a),B.aN,i.Uv(a)],p)
 l=a.e
 if(l==="quiz"||l==="flashcard")B.b.H(m,A.b([B.aN,i.Ul(a)],p))
-B.b.H(o,A.b([A.bI(m,B.q,B.l,B.p,0,h),B.cl],p))}m=A.b([],p)
-l=!s
-if(l)B.b.H(m,A.b([i.Uw(a),B.de,i.Uv(a),B.de],p))
-n=n.length
+B.b.H(o,A.b([A.bI(m,B.q,B.l,B.p,0,h),B.cl],p))}n=n.length
 n=n!==0?""+n+" dosya eklendi...":"Bir soru sor..."
-k=a.c
-m.push(A.cv(A.Zq(i.w,A.UH(h,new A.ft(4,A.aL(24),new A.aW(B.bV,1,B.x,-1)),h,B.iN,h,h,h,h,!0,new A.ft(4,A.aL(24),new A.aW(B.bV,1,B.x,-1)),h,h,h,h,h,B.ip,!0,h,h,h,h,new A.ft(4,A.aL(24),new A.aW(B.n,2,B.x,-1)),h,h,h,h,h,h,h,h,h,n,h,h,h,h,h,h,h,h,h,!0,!0,h,h,h,h,h,h,h,h,h,h,h,h,h,h),!k,B.hR,5,1,!1,h,new A.aDs(i)),1))
-if(l)B.b.H(m,A.b([B.de,i.Ul(a)],p))
-m.push(B.de)
-p=k?h:i.gawR()
-n=A.aL(24)
-l=k?h:new A.fO(B.bq,B.c_,B.aY,A.b([B.n,B.n.aF(0.8)],t.t_),h,h)
-j=k?B.bV:h
-m.push(A.hI(!1,n,!0,A.aZ(h,B.Iu,B.k,h,h,new A.aX(j,h,h,h,k?h:A.b([new A.bi(0,B.G,B.n.aF(0.3),B.dz,8)],r),l,B.bS),h,44,h,h,h,h,44),h,!0,h,h,h,h,h,h,h,h,h,p,h,h,h,h,h,h,h))
-o.push(A.bI(m,B.eL,B.l,B.p,0,h))
+m=a.c
+n=A.b([A.cv(A.Zq(i.w,A.UH(h,new A.ft(4,A.aL(24),new A.aW(B.bV,1,B.x,-1)),h,B.iN,h,h,h,h,!0,new A.ft(4,A.aL(24),new A.aW(B.bV,1,B.x,-1)),h,h,h,h,h,B.ip,!0,h,h,h,h,new A.ft(4,A.aL(24),new A.aW(B.n,2,B.x,-1)),h,h,h,h,h,h,h,h,h,n,h,h,h,h,h,h,h,h,h,!0,!0,h,h,h,h,h,h,h,h,h,h,h,h,h,h),!m,B.hR,5,1,!1,h,new A.aDs(i)),1)],p)
+if(!s)B.b.H(n,A.b([B.de,i.Uw(a),B.de,i.Uv(a),B.de,i.Ul(a)],p))
+n.push(B.de)
+p=m?h:i.gawR()
+l=A.aL(24)
+k=m?h:new A.fO(B.bq,B.c_,B.aY,A.b([B.n,B.n.aF(0.8)],t.t_),h,h)
+j=m?B.bV:h
+n.push(A.hI(!1,l,!0,A.aZ(h,B.Iu,B.k,h,h,new A.aX(j,h,h,h,m?h:A.b([new A.bi(0,B.G,B.n.aF(0.3),B.dz,8)],r),k,B.bS),h,44,h,h,h,h,44),h,!0,h,h,h,h,h,h,h,h,h,p,h,h,h,h,h,h,h))
+o.push(A.bI(n,B.eL,B.l,B.p,0,h))
 return A.aZ(h,A.oV(!0,A.bE(o,B.q,B.l,B.a0),B.T,!0),B.k,h,h,new A.aX(g.ax.k2,h,h,h,q,h,B.w),h,h,h,B.cu,h,h,h)},
 Uw(a){var s,r,q,p,o=this,n=null,m=o.z.length!==0,l=A.aL(12)
 if(m)s=B.n.aF(0.1)

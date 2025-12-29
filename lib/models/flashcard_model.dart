@@ -133,8 +133,9 @@ class FlashcardParser {
     // Comprehensive label removal regex
     // This wipes out: "Kavram:", "Soru 1:", "(Soru/Kavram):**", "**Cevap:**", "(Cevap):", etc.
     final labelPattern = RegExp(
-      r'^(?:(?:\*\*|[\(\)\s\_])*(?:ÖN\s*YÜZ|ARKA\s*YÜZ|Soru\/Kavram|Soru|Kavram|Cevap|Açıklama|İpucu|Front|Back|Hint|Zorluk)[^:]*?[:\s\)\*\_]+)+',
+      r'^(?:(?:[^\p{L}\d\s])*(?:ÖN\s*YÜZ|ARKA\s*YÜZ|Soru\/Kavram|Soru|Kavram|Cevap|Açıklama|İpucu|Front|Back|Hint|Zorluk)[^:]*?[:\s\)\*\_]+)+',
       caseSensitive: false,
+      unicode: true,
     );
     
     result = result.replaceFirst(labelPattern, '').trim();
@@ -143,7 +144,7 @@ class FlashcardParser {
     bool changed = true;
     while (changed) {
       changed = false;
-      final symbols = ['**', '*', '_', ':', '💭', '❓', '✅', '💡', '🔗', '#', '-', '(', ')', '.', ' ', '🗓️'];
+      final symbols = ['**', '*', '_', ':', '💭', '❓', '✅', '💡', '🔗', '#', '-', '(', ')', '.', ' ', '🗓️', '🎴'];
       for (final s in symbols) {
         if (result.startsWith(s)) {
           result = result.substring(s.length).trim();

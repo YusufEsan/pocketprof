@@ -240,8 +240,9 @@ class QuizParser {
 
     // Comprehensive label removal regex
     final labelPattern = RegExp(
-      r'^(?:(?:\*\*|[\(\)\s\_])*(?:ÖN\s*YÜZ|ARKA\s*YÜZ|Soru\/Kavram|Soru|Kavram|Cevap|Açıklama|İpucu|Front|Back|Hint|Zorluk)[^:]*?[:\s\)\*\_]+)+',
+      r'^(?:(?:[^\p{L}\d\s])*(?:ÖN\s*YÜZ|ARKA\s*YÜZ|Soru\/Kavram|Soru|Kavram|Cevap|Açıklama|İpucu|Front|Back|Hint|Zorluk)[^:]*?[:\s\)\*\_]+)+',
       caseSensitive: false,
+      unicode: true,
     );
 
     result = result.replaceFirst(labelPattern, '').trim();
@@ -261,6 +262,7 @@ class QuizParser {
       '.',
       ' ',
       '🗓️',
+      '🎴',
     ];
 
     bool changed = true;

@@ -144,8 +144,9 @@ class FlashcardParser {
     
     // Comprehensive label removal regex
     // This wipes out: "Kavram:", "Soru 1:", "ÖN YÜZ:", "**Cevap:**", etc.
+    // Uses \b to avoid matching part of a word (e.g. "Sorunu" vs "Soru")
     final labelPattern = RegExp(
-      r'^(?:[^\w\s]*(?:ÖN\s*YÜZ|ARKA\s*YÜZ|Soru\/Kavram|Soru|Kavram|Cevap|Açıklama|İpucu|Front|Back|Hint|Zorluk)[^:]*?[:\s\)\*\_]+)+',
+      r'^(?:[^\w\s]*(?:ÖN\s*YÜZ|ARKA\s*YÜZ|Soru\/Kavram|Soru|Kavram|Cevap|Açıklama|İpucu|Front|Back|Hint|Zorluk)\b(?:\s*\d+)?[:\s\)\*\_]+)+',
       caseSensitive: false,
     );
     

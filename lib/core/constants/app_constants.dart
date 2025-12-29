@@ -86,7 +86,7 @@ D) [Şık D]
 💡 **Açıklama:** [Buraya neden bu şıkkın doğru olduğunu anlatan kısa bir cümle yaz]
 
 ## Kurallar:
-- 5 soru hazırla (2 kolay, 2 orta, 1 zor)
+- Sadece senden istenen sayıda soru hazırla.
 - Şıklar birbirine yakın olsun (kolay eleme olmasın)
 - "Hepsi" veya "Hiçbiri" şıklarından kaçın
 - Sorular metnin farklı bölümlerinden olsun
@@ -112,7 +112,7 @@ Bu metinden etkili hatırlatma kartları oluştur.
 🔗 **İpucu:** [Buraya hatırlatıcı bir ipucu yaz]
 
 ## Kurallar:
-- 6 kart hazırla
+- Sadece senden istenen sayıda kart hazırla.
 - Kavram kartları ve soru kartları karışık olsun
 - Her kart bağımsız olarak anlaşılabilir olsun
 - Görsel hafıza için emoji'ler kullan

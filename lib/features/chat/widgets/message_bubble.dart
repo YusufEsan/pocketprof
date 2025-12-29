@@ -372,11 +372,7 @@ class _MessageBubbleState extends State<MessageBubble>
           _flashcardBackRegex,
           (match) => '**ARKA YÜZ:** ••••••••••••••••',
         );
-        // Hide 🔗 **İpucu:** lines
-        content = content.replaceAllMapped(
-          _hintRegex,
-          (match) => '🔗 **İpucu:** ••••••',
-        );
+        // Hint will remain visible as per user request
       }
     }
 

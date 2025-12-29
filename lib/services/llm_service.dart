@@ -38,7 +38,7 @@ class LLMService {
 
     if (questionCount != null && (mode == 'quiz' || mode == 'flashcard')) {
       prompt +=
-          "\n\nKRİTİK TALİMAT: Tam olarak $questionCount adet ${mode == 'quiz' ? 'soru' : 'flashcard'} oluşturmalısın. Ne eksik ne fazla.";
+          "\n\n🚨 ÇOK KRİTİK TALİMAT: Tam olarak $questionCount adet ${mode == 'quiz' ? 'soru' : 'flashcard'} oluşturmalısın. Kesinlikle ne bir eksik ne bir fazla olsun. Toplam sayı TAM OLARAK $questionCount OLMALIDIR.";
     }
 
     prompt +=

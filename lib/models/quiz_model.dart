@@ -147,12 +147,23 @@ class QuizParser {
     ).firstMatch(block);
     final difficulty = difficultyMatch?.group(1) ?? 'Orta';
 
-    // 2. Options location - support A), A., A-, (A)
+    // 2. Identify the boundary where options end (Answer or Explanation section)
+    final answerSectionStart = block.indexOf(RegExp(
+      r'✅|Doğru\s*Cevap|Correct\s*Answer|Cevap|Answer|Doğru|💡|Açıklama|Explain',
+      caseSensitive: false,
+    ));
+
+    // 3. Options location - support A), A., A-, (A)
     final optionPattern = RegExp(
       r'(?:\n|\s)[\*\-\s]*\(?([A-D])[\.)\-\s]', 
       caseSensitive: false, 
     );
-    final allOptionMatches = optionPattern.allMatches(block).toList();
+    
+    // Only find options before the answer section starts
+    final allMatches = optionPattern.allMatches(block);
+    final allOptionMatches = allMatches.where((m) {
+      return answerSectionStart == -1 || m.start < answerSectionStart;
+    }).toList();
 
     if (allOptionMatches.isEmpty) return null;
 
@@ -166,17 +177,17 @@ class QuizParser {
         .trim();
     questionText = _cleanText(questionText);
 
-    // 3. Extract options
+    // 4. Extract options
     final options = <QuizOption>[];
     for (int j = 0; j < allOptionMatches.length; j++) {
       final m = allOptionMatches[j];
       final start = m.end;
       final end = j + 1 < allOptionMatches.length
           ? allOptionMatches[j + 1].start
-          : block.length;
+          : (answerSectionStart != -1 ? answerSectionStart : block.length);
 
       String optContent = block.substring(start, end);
-      // Added 'Cevap' and 'Answer' to marker list to better strip them from options
+      // Strip any lingering markers just in case
       final markerIndex = optContent.indexOf(
         RegExp(
           r'✅|Correct|Doğru|💡|Açıklama|Explain|Cevap|Answer',

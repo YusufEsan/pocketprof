@@ -149,8 +149,9 @@ class QuizParser {
 
     // 2. Identify the boundary where options end (Answer or Explanation section)
     // We use a more specific regex to avoid false positives with words like "Doğru" in question text
+    // Fixed: Now handles cases with ** asterisks around the labels
     final answerSectionPattern = RegExp(
-      r'(?:\n|^)\s*(?:✅|Doğru\s*Cevap|Correct\s*Answer|Cevap|Answer|💡|Açıklama|Explain)[:\s\*-]+',
+      r'(?:\n|^)\s*(?:\*\*)?(?:✅|Doğru\s*Cevap|Correct\s*Answer|Cevap|Answer|💡|Açıklama|Explain)(?:\*\*)?[:\s\*-]+',
       caseSensitive: false,
     );
     final answerMatch = answerSectionPattern.firstMatch(block);
@@ -194,7 +195,7 @@ class QuizParser {
       String optContent = block.substring(start, end);
       // Strip any lingering markers just in case (e.g. if answer is on same line as last option)
       final markerMatch = RegExp(
-        r'(?:\n|\s+)(?:✅|Correct|Doğru\s*Cevap|Doğru|💡|Açıklama|Explain|Cevap|Answer)[:\s\*-]+',
+        r'(?:\n|\s+)(?:\*\*)?(?:✅|Correct|Doğru\s*Cevap|Doğru|💡|Açıklama|Explain|Cevap|Answer)(?:\*\*)?[:\s\*-]+',
         caseSensitive: false,
       ).firstMatch(optContent);
       

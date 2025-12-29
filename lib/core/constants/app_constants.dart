@@ -87,6 +87,7 @@ D) [Şık D]
 
 ## Kurallar:
 - Sadece senden istenen sayıda soru hazırla.
+- SADECE ÇOKTAN SEÇMELİ (A, B, C, D) sorular hazırla. ASLA açık uçlu soru sorma.
 - Şıklar birbirine yakın olsun (kolay eleme olmasın)
 - "Hepsi" veya "Hiçbiri" şıklarından kaçın
 - Sorular metnin farklı bölümlerinden olsun

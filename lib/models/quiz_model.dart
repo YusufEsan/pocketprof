@@ -105,6 +105,15 @@ class QuizParser {
       matches = headerStart.allMatches(cleanContent).toList();
     }
 
+    // Fallback 3: Just look for bolded numbers like **1.**
+    if (matches.isEmpty) {
+      final boldNumberStart = RegExp(
+        r'(?:^|\n)\s*\*\*(\d+)[\.)]\*\*',
+        multiLine: true,
+      );
+      matches = boldNumberStart.allMatches(cleanContent).toList();
+    }
+
     matches.sort((a, b) => a.start.compareTo(b.start));
 
     for (int i = 0; i < matches.length; i++) {
@@ -140,9 +149,8 @@ class QuizParser {
 
     // 2. Options location - support A), A., A-, (A)
     final optionPattern = RegExp(
-      r'(?:^|\n)\s*[\*\-\s]*\(?([A-D])[\.)\-\s]', 
+      r'(?:\n|\s)[\*\-\s]*\(?([A-D])[\.)\-\s]', 
       caseSensitive: false, 
-      multiLine: true
     );
     final allOptionMatches = optionPattern.allMatches(block).toList();
 
@@ -198,12 +206,12 @@ class QuizParser {
     if (explicitMatch != null) {
       correctAnswer = explicitMatch.group(1)!.toUpperCase();
     } else {
-      // Priority 2: Look for bolded letter e.g. **A**
-      final boldMatch = RegExp(r'\*\*([A-D])\*\*').firstMatch(block);
+      // Priority 2: Look for bolded letter e.g. **A** or **A)**
+      final boldMatch = RegExp(r'\*\*\(?([A-D])[\)\.]?\*\*').firstMatch(block);
       if (boldMatch != null) {
         correctAnswer = boldMatch.group(1)!.toUpperCase();
       } else {
-        // Priority 3: Look for something like (B) in the text
+        // Priority 3: Look for something like (B) or [B] in the text
         final parenMatch = RegExp(r'[\(\[]([A-D])[\]\)]').firstMatch(block);
         if (parenMatch != null) {
           correctAnswer = parenMatch.group(1)!.toUpperCase();

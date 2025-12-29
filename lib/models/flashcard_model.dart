@@ -40,6 +40,15 @@ class FlashcardParser {
       matches = fallbackStart.allMatches(cleanContent).toList();
     }
     
+    // Fallback 2: Just look for bolded numbers like **1.**
+    if (matches.isEmpty) {
+      final boldNumberStart = RegExp(
+        r'(?:^|\n)\s*\*\*(\d+)[\.)]\*\*',
+        multiLine: true,
+      );
+      matches = boldNumberStart.allMatches(cleanContent).toList();
+    }
+    
     matches.sort((a, b) => a.start.compareTo(b.start));
     
     for (int i = 0; i < matches.length; i++) {
@@ -107,7 +116,10 @@ class FlashcardParser {
       final lines = block.split('\n');
       if (lines.length >= 2) {
         front = lines[0];
-        back = lines.skip(1).join('\n');
+        back = lines.sublist(1).join('\n');
+      } else if (lines.length == 1 && lines[0].isNotEmpty) {
+        front = lines[0];
+        back = "..."; // Placeholder if back is missing
       } else {
         return null; // Can't parse
       }

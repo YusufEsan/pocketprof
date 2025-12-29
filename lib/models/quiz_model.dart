@@ -148,10 +148,13 @@ class QuizParser {
     final difficulty = difficultyMatch?.group(1) ?? 'Orta';
 
     // 2. Identify the boundary where options end (Answer or Explanation section)
-    final answerSectionStart = block.indexOf(RegExp(
-      r'✅|Doğru\s*Cevap|Correct\s*Answer|Cevap|Answer|Doğru|💡|Açıklama|Explain',
+    // We use a more specific regex to avoid false positives with words like "Doğru" in question text
+    final answerSectionPattern = RegExp(
+      r'(?:\n|^)\s*(?:✅|Doğru\s*Cevap|Correct\s*Answer|Cevap|Answer|💡|Açıklama|Explain)[:\s\*-]+',
       caseSensitive: false,
-    ));
+    );
+    final answerMatch = answerSectionPattern.firstMatch(block);
+    final answerSectionStart = answerMatch?.start ?? -1;
 
     // 3. Options location - support A), A., A-, (A)
     final optionPattern = RegExp(
@@ -189,15 +192,14 @@ class QuizParser {
           : (answerSectionStart != -1 ? answerSectionStart : block.length);
 
       String optContent = block.substring(start, end);
-      // Strip any lingering markers just in case
-      final markerIndex = optContent.indexOf(
-        RegExp(
-          r'✅|Correct|Doğru|💡|Açıklama|Explain|Cevap|Answer',
-          caseSensitive: false,
-        ),
-      );
-      if (markerIndex != -1) {
-        optContent = optContent.substring(0, markerIndex);
+      // Strip any lingering markers just in case (e.g. if answer is on same line as last option)
+      final markerMatch = RegExp(
+        r'(?:\n|\s+)(?:✅|Correct|Doğru\s*Cevap|Doğru|💡|Açıklama|Explain|Cevap|Answer)[:\s\*-]+',
+        caseSensitive: false,
+      ).firstMatch(optContent);
+      
+      if (markerMatch != null) {
+        optContent = optContent.substring(0, markerMatch.start);
       }
 
       options.add(

@@ -759,45 +759,63 @@ class _MessageBubbleState extends State<MessageBubble>
   }
 
   void _startQuiz(BuildContext context) {
-    var questions = QuizParser.parse(widget.message.content);
+    try {
+      var questions = QuizParser.parse(widget.message.content);
 
-    // Strict enforcement of requested count
-    if (widget.message.questionCount != null &&
-        questions.length > widget.message.questionCount!) {
-      questions = questions.take(widget.message.questionCount!).toList();
+      // Strict enforcement of requested count
+      if (widget.message.questionCount != null &&
+          questions.length > widget.message.questionCount!) {
+        questions = questions.take(widget.message.questionCount!).toList();
+      }
+
+      if (questions.isEmpty) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('Quiz soruları bulunamadı')));
+        return;
+      }
+
+      Navigator.of(context).push(
+        MaterialPageRoute(builder: (context) => QuizScreen(questions: questions)),
+      );
+    } catch (e) {
+      debugPrint('Quiz start error: $e');
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Quiz başlatılamadı: $e')),
+        );
+      }
     }
-
-    if (questions.isEmpty) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('Quiz soruları bulunamadı')));
-      return;
-    }
-
-    Navigator.of(context).push(
-      MaterialPageRoute(builder: (context) => QuizScreen(questions: questions)),
-    );
   }
 
   void _startFlashcards(BuildContext context) {
-    var cards = FlashcardParser.parse(widget.message.content);
+    try {
+      var cards = FlashcardParser.parse(widget.message.content);
 
-    // Strict enforcement of requested count
-    if (widget.message.questionCount != null &&
-        cards.length > widget.message.questionCount!) {
-      cards = cards.take(widget.message.questionCount!).toList();
-    }
+      // Strict enforcement of requested count
+      if (widget.message.questionCount != null &&
+          cards.length > widget.message.questionCount!) {
+        cards = cards.take(widget.message.questionCount!).toList();
+      }
 
-    if (cards.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Hatırlatma kartları bulunamadı')),
+      if (cards.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Hatırlatma kartları bulunamadı')),
+        );
+        return;
+      }
+
+      Navigator.of(context).push(
+        MaterialPageRoute(builder: (context) => FlashcardScreen(cards: cards)),
       );
-      return;
+    } catch (e) {
+      debugPrint('Flashcard start error: $e');
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Kartlar başlatılamadı: $e')),
+        );
+      }
     }
-
-    Navigator.of(context).push(
-      MaterialPageRoute(builder: (context) => FlashcardScreen(cards: cards)),
-    );
   }
 
   Widget _buildActionButton({

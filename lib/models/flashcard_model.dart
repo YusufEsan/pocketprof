@@ -131,11 +131,10 @@ class FlashcardParser {
     String result = text.trim();
     
     // Comprehensive label removal regex
-    // This wipes out: "Kavram:", "Soru 1:", "(Soru/Kavram):**", "**Cevap:**", "(Cevap):", etc.
+    // This wipes out: "Kavram:", "Soru 1:", "ÖN YÜZ:", "**Cevap:**", etc.
     final labelPattern = RegExp(
-      r'^(?:(?:[^\p{L}\d\s])*(?:ÖN\s*YÜZ|ARKA\s*YÜZ|Soru\/Kavram|Soru|Kavram|Cevap|Açıklama|İpucu|Front|Back|Hint|Zorluk)[^:]*?[:\s\)\*\_]+)+',
+      r'^(?:[^\w\s]*(?:ÖN\s*YÜZ|ARKA\s*YÜZ|Soru\/Kavram|Soru|Kavram|Cevap|Açıklama|İpucu|Front|Back|Hint|Zorluk)[^:]*?[:\s\)\*\_]+)+',
       caseSensitive: false,
-      unicode: true,
     );
     
     result = result.replaceFirst(labelPattern, '').trim();
@@ -157,8 +156,10 @@ class FlashcardParser {
       }
     }
     
-    // Final sanitization: remove any leading non-word characters
-    result = result.replaceFirst(RegExp(r'^[^\w\p{L}\d\s\u{1F300}-\u{1F9FF}]+', unicode: true), '').trim();
+    // Final cleanup of common leading punctuation
+    while (result.isNotEmpty && r'*_:-. '.contains(result[0])) {
+      result = result.substring(1).trim();
+    }
     
     return result;
   }

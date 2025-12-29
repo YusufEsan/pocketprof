@@ -300,22 +300,19 @@ class ChatNotifier extends StateNotifier<ChatState> {
       var pendingContent = '';
 
       // Check if we need to filter conversation history due to mode change
-      // Only include messages that match the current mode to prevent format confusion
+      // Only include AI responses that match the current mode to prevent format confusion
       List<Map<String, String>> filteredHistory = [];
       final currentMode = state.currentMode;
       
-      // If quiz or flashcard mode, don't include previous AI responses from different modes
-      if (currentMode == 'quiz' || currentMode == 'flashcard') {
-        for (final msg in state.messages.take(10)) {
-          if (msg.isUser) {
-            filteredHistory.add({'role': 'user', 'content': msg.content});
-          } else if (msg.mode == currentMode) {
-            // Only include AI responses from the same mode
-            filteredHistory.add({'role': 'assistant', 'content': msg.content});
-          }
+      // Filter AI responses from different modes for ALL modes
+      for (final msg in state.messages.take(10)) {
+        if (msg.isUser) {
+          filteredHistory.add({'role': 'user', 'content': msg.content});
+        } else if (msg.mode == currentMode || msg.mode == null) {
+          // Only include AI responses from the same mode (or legacy messages without mode)
+          filteredHistory.add({'role': 'assistant', 'content': msg.content});
         }
-      } else {
-        filteredHistory = state.conversationHistory.take(10).toList();
+        // Skip AI responses from different modes
       }
 
       await for (final chunk in _llmService.streamMessage(

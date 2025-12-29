@@ -670,11 +670,14 @@ class _ChatScreenState extends ConsumerState<ChatScreen>
                   );
                 },
               ),
-              // Help button
-              IconButton(
-                icon: const Icon(Icons.help_outline),
+              // Help button with label
+              TextButton.icon(
+                icon: const Icon(Icons.help_outline, size: 20),
+                label: const Text('Nasıl Yapılır?'),
                 onPressed: () => context.go('/help'),
-                tooltip: 'Yardım',
+                style: TextButton.styleFrom(
+                  foregroundColor: Theme.of(context).iconTheme.color,
+                ),
               ),
               // Home button
               IconButton(

@@ -34,6 +34,11 @@ Eğer sana birden fazla dosya/kaynak verilmişse (--- dosya_adi.pdf --- ile ayr�
 - Her dosya için ayrı bölüm (birden fazla dosya varsa)
 - Her bölümde: kısa özet, ana açıklama, önemli noktalar
 - Sonunda genel 📚 Özet maddeleri (3-5 madde)
+
+## YASAK:
+- ASLA çoktan seçmeli soru (A, B, C, D) oluşturma
+- ASLA flashcard veya hatırlatma kartı formatı kullanma
+- Sadece konu anlatımı yap, test YAPMA
 ''';
 
   static const String summaryPrompt = '''
@@ -64,6 +69,9 @@ Bu metni/metinleri öğrenci için etkili ve akılda kalıcı bir şekilde özet
 - Tekrarları birleştir
 - Önemli terimleri **kalın** yap
 - Sayısal verileri koru
+- ASLA çoktan seçmeli soru (A, B, C, D) oluşturma
+- ASLA flashcard veya test formatı kullanma
+- Sadece özet yap, soru SORMA
 ''';
 
   static const String quizPrompt = '''

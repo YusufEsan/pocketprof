@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:pocket_prof/features/home/home_screen.dart';
 import 'package:pocket_prof/features/chat/chat_screen.dart';
 import 'package:pocket_prof/features/settings/settings_screen.dart';
+import 'package:pocket_prof/features/help/help_screen.dart';
 
 /// GoRouter configuration for PocketProf
 class AppRouter {
@@ -57,6 +58,24 @@ class AppRouter {
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
           child: const SettingsScreen(),
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            const begin = Offset(0.0, 1.0);
+            const end = Offset.zero;
+            const curve = Curves.easeInOut;
+            var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+            return SlideTransition(
+              position: animation.drive(tween),
+              child: child,
+            );
+          },
+        ),
+      ),
+      GoRoute(
+        path: '/help',
+        name: 'help',
+        pageBuilder: (context, state) => CustomTransitionPage(
+          key: state.pageKey,
+          child: const HelpScreen(),
           transitionsBuilder: (context, animation, secondaryAnimation, child) {
             const begin = Offset(0.0, 1.0);
             const end = Offset.zero;

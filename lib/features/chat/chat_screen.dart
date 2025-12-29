@@ -670,6 +670,12 @@ class _ChatScreenState extends ConsumerState<ChatScreen>
                   );
                 },
               ),
+              // Help button
+              IconButton(
+                icon: const Icon(Icons.help_outline),
+                onPressed: () => context.go('/help'),
+                tooltip: 'Yardım',
+              ),
               // Home button
               IconButton(
                 icon: const Icon(Icons.home_outlined),

@@ -681,42 +681,55 @@ class _MessageBubbleState extends State<MessageBubble>
         // Quiz start button
         if (isQuizMode) ...[
           const SizedBox(height: 12),
-          Opacity(
-            opacity: widget.isStreaming ? 0.5 : 1.0,
-            child: InkWell(
-              onTap: widget.isStreaming ? null : () => _startQuiz(context),
-              borderRadius: BorderRadius.circular(12),
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [
-                      AppTheme.primary,
-                      AppTheme.primary.withValues(alpha: 0.8),
-                    ],
-                  ),
+          AbsorbPointer(
+            absorbing: widget.isStreaming,
+            child: Opacity(
+              opacity: widget.isStreaming ? 0.3 : 1.0,
+              child: ColorFiltered(
+                colorFilter: widget.isStreaming 
+                    ? const ColorFilter.matrix([
+                        0.2126, 0.7152, 0.0722, 0, 0,
+                        0.2126, 0.7152, 0.0722, 0, 0,
+                        0.2126, 0.7152, 0.0722, 0, 0,
+                        0,      0,      0,      1, 0,
+                      ])
+                    : const ColorFilter.mode(Colors.transparent, BlendMode.dst),
+                child: InkWell(
+                  onTap: widget.isStreaming ? null : () => _startQuiz(context),
                   borderRadius: BorderRadius.circular(12),
-                  boxShadow: widget.isStreaming ? null : [
-                    BoxShadow(
-                      color: AppTheme.primary.withValues(alpha: 0.3),
-                      blurRadius: 8,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Icon(Icons.play_arrow, color: Colors.white, size: 18),
-                    const SizedBox(width: 6),
-                    Text(
-                      widget.isStreaming ? 'Hazırlanıyor...' : 'Quiz\'i Başlat',
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w600,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [
+                          AppTheme.primary,
+                          AppTheme.primary.withValues(alpha: 0.8),
+                        ],
                       ),
+                      borderRadius: BorderRadius.circular(12),
+                      boxShadow: widget.isStreaming ? null : [
+                        BoxShadow(
+                          color: AppTheme.primary.withValues(alpha: 0.3),
+                          blurRadius: 8,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
                     ),
-                  ],
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(Icons.play_arrow, color: Colors.white, size: 18),
+                        const SizedBox(width: 6),
+                        Text(
+                          widget.isStreaming ? 'Hazırlanıyor...' : 'Quiz\'i Başlat',
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
               ),
             ),
@@ -725,39 +738,52 @@ class _MessageBubbleState extends State<MessageBubble>
         // Flashcard start button
         if (isFlashcardMode) ...[
           const SizedBox(height: 12),
-          Opacity(
-            opacity: widget.isStreaming ? 0.5 : 1.0,
-            child: InkWell(
-              onTap: widget.isStreaming ? null : () => _startFlashcards(context),
-              borderRadius: BorderRadius.circular(12),
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [Colors.purple, Colors.purple.withValues(alpha: 0.8)],
-                  ),
+          AbsorbPointer(
+            absorbing: widget.isStreaming,
+            child: Opacity(
+              opacity: widget.isStreaming ? 0.3 : 1.0,
+              child: ColorFiltered(
+                colorFilter: widget.isStreaming 
+                    ? const ColorFilter.matrix([
+                        0.2126, 0.7152, 0.0722, 0, 0,
+                        0.2126, 0.7152, 0.0722, 0, 0,
+                        0.2126, 0.7152, 0.0722, 0, 0,
+                        0,      0,      0,      1, 0,
+                      ])
+                    : const ColorFilter.mode(Colors.transparent, BlendMode.dst),
+                child: InkWell(
+                  onTap: widget.isStreaming ? null : () => _startFlashcards(context),
                   borderRadius: BorderRadius.circular(12),
-                  boxShadow: widget.isStreaming ? null : [
-                    BoxShadow(
-                      color: Colors.purple.withValues(alpha: 0.3),
-                      blurRadius: 8,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Icon(Icons.style, color: Colors.white, size: 18),
-                    const SizedBox(width: 6),
-                    Text(
-                      widget.isStreaming ? 'Hazırlanıyor...' : 'Kartları Başlat',
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w600,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [Colors.purple, Colors.purple.withValues(alpha: 0.8)],
                       ),
+                      borderRadius: BorderRadius.circular(12),
+                      boxShadow: widget.isStreaming ? null : [
+                        BoxShadow(
+                          color: Colors.purple.withValues(alpha: 0.3),
+                          blurRadius: 8,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
                     ),
-                  ],
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(Icons.style, color: Colors.white, size: 18),
+                        const SizedBox(width: 6),
+                        Text(
+                          widget.isStreaming ? 'Hazırlanıyor...' : 'Kartları Başlat',
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
               ),
             ),

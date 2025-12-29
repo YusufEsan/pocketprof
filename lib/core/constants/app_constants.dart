@@ -114,6 +114,7 @@ Bu metinden etkili hatırlatma kartları oluştur.
 
 ## Kurallar:
 - Sadece senden istenen sayıda kart hazırla.
+- ASLA çoktan seçmeli soru formatı (A, B, C, D şıkları) KULLANMA. Bu FLASHCARD modudur, QUIZ DEĞİL.
 - Kavram kartları ve soru kartları karışık olsun
 - Her kart bağımsız olarak anlaşılabilir olsun
 - Görsel hafıza için emoji'ler kullan

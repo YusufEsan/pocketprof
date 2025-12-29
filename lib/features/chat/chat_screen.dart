@@ -1134,6 +1134,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen>
                         child: MessageBubble(
                           message: message,
                           index: messageIndex,
+                          isStreaming: true,
                           onSpeak: !message.isUser && settings.ttsEnabled
                               ? () => ref
                                     .read(audioPlayerProvider.notifier)
@@ -1150,6 +1151,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen>
                       child: MessageBubble(
                         message: message,
                         index: messageIndex,
+                        isStreaming: false,
                         shouldAnimate:
                             index ==
                             0, // Only animate if it's the latest message

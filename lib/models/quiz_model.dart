@@ -114,8 +114,22 @@ class QuizParser {
       matches = boldNumberStart.allMatches(cleanContent).toList();
     }
 
+    // Fallback 4: Loosest pattern - any line starting with a number
+    if (matches.isEmpty) {
+      final looseStart = RegExp(
+        r'(?:^|\n)\s*(\d+)[\.)\-:\s]\s*',
+        multiLine: true,
+      );
+      matches = looseStart.allMatches(cleanContent).toList();
+    }
+
     matches.sort((a, b) => a.start.compareTo(b.start));
 
+    print('--- QuizParser Debug ---');
+    print('Raw response length: ${content.length}');
+    print('Clean content prefix: ${cleanContent.length > 200 ? cleanContent.substring(0, 200) : cleanContent}');
+    print('Detected ${matches.length} question blocks');
+    
     for (int i = 0; i < matches.length; i++) {
       final match = matches[i];
       final startIndex = match.end;
@@ -124,7 +138,10 @@ class QuizParser {
           : cleanContent.length;
 
       final block = cleanContent.substring(startIndex, endIndex).trim();
-      if (block.length < 10) continue;
+      if (block.length < 10) {
+        print('Block $i skipped: too short (${block.length} chars)');
+        continue;
+      }
 
       final question = _parseQuestionBlock(
         int.tryParse(match.group(1) ?? '') ?? (i + 1),
@@ -133,9 +150,13 @@ class QuizParser {
 
       if (question != null) {
         questions.add(question);
+      } else {
+        print('Block $i failed to parse. Content snippet: ${block.length > 100 ? block.substring(0, 100) : block}');
       }
     }
 
+    print('Successfully parsed ${questions.length} questions');
+    print('------------------------');
     return questions;
   }
 
@@ -246,8 +267,13 @@ class QuizParser {
       explanation = _cleanText(explainMatch.group(1)!);
     }
 
-    if (questionText.isEmpty || options.isEmpty || correctAnswer.isEmpty)
+    if (questionText.isEmpty || options.isEmpty || correctAnswer.isEmpty) {
+      print('  - Parsing failure in question $number:');
+      if (questionText.isEmpty) print('    * questionText is empty');
+      if (options.isEmpty) print('    * options list is empty');
+      if (correctAnswer.isEmpty) print('    * correctAnswer is empty');
       return null;
+    }
 
     return QuizQuestion(
       number: number,

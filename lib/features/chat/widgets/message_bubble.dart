@@ -17,6 +17,8 @@ class MessageBubble extends StatefulWidget {
   final bool isHighlighted;
   final int? activeOccurrenceIndex; // Which occurrence in this message is active
 
+  final bool isStreaming;
+
   const MessageBubble({
     super.key,
     required this.message,
@@ -26,6 +28,7 @@ class MessageBubble extends StatefulWidget {
     this.searchQuery,
     this.isHighlighted = false,
     this.activeOccurrenceIndex,
+    this.isStreaming = false,
   });
 
   @override
@@ -678,40 +681,43 @@ class _MessageBubbleState extends State<MessageBubble>
         // Quiz start button
         if (isQuizMode) ...[
           const SizedBox(height: 12),
-          InkWell(
-            onTap: () => _startQuiz(context),
-            borderRadius: BorderRadius.circular(12),
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [
-                    AppTheme.primary,
-                    AppTheme.primary.withValues(alpha: 0.8),
+          Opacity(
+            opacity: widget.isStreaming ? 0.5 : 1.0,
+            child: InkWell(
+              onTap: widget.isStreaming ? null : () => _startQuiz(context),
+              borderRadius: BorderRadius.circular(12),
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      AppTheme.primary,
+                      AppTheme.primary.withValues(alpha: 0.8),
+                    ],
+                  ),
+                  borderRadius: BorderRadius.circular(12),
+                  boxShadow: widget.isStreaming ? null : [
+                    BoxShadow(
+                      color: AppTheme.primary.withValues(alpha: 0.3),
+                      blurRadius: 8,
+                      offset: const Offset(0, 2),
+                    ),
                   ],
                 ),
-                borderRadius: BorderRadius.circular(12),
-                boxShadow: [
-                  BoxShadow(
-                    color: AppTheme.primary.withValues(alpha: 0.3),
-                    blurRadius: 8,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
-              ),
-              child: const Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(Icons.play_arrow, color: Colors.white, size: 18),
-                  SizedBox(width: 6),
-                  Text(
-                    'Quiz\'i Başlat',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.w600,
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(Icons.play_arrow, color: Colors.white, size: 18),
+                    const SizedBox(width: 6),
+                    Text(
+                      widget.isStreaming ? 'Hazırlanıyor...' : 'Quiz\'i Başlat',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),
@@ -719,37 +725,40 @@ class _MessageBubbleState extends State<MessageBubble>
         // Flashcard start button
         if (isFlashcardMode) ...[
           const SizedBox(height: 12),
-          InkWell(
-            onTap: () => _startFlashcards(context),
-            borderRadius: BorderRadius.circular(12),
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [Colors.purple, Colors.purple.withValues(alpha: 0.8)],
-                ),
-                borderRadius: BorderRadius.circular(12),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.purple.withValues(alpha: 0.3),
-                    blurRadius: 8,
-                    offset: const Offset(0, 2),
+          Opacity(
+            opacity: widget.isStreaming ? 0.5 : 1.0,
+            child: InkWell(
+              onTap: widget.isStreaming ? null : () => _startFlashcards(context),
+              borderRadius: BorderRadius.circular(12),
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [Colors.purple, Colors.purple.withValues(alpha: 0.8)],
                   ),
-                ],
-              ),
-              child: const Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(Icons.style, color: Colors.white, size: 18),
-                  SizedBox(width: 6),
-                  Text(
-                    'Kartları Başlat',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.w600,
+                  borderRadius: BorderRadius.circular(12),
+                  boxShadow: widget.isStreaming ? null : [
+                    BoxShadow(
+                      color: Colors.purple.withValues(alpha: 0.3),
+                      blurRadius: 8,
+                      offset: const Offset(0, 2),
                     ),
-                  ),
-                ],
+                  ],
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(Icons.style, color: Colors.white, size: 18),
+                    const SizedBox(width: 6),
+                    Text(
+                      widget.isStreaming ? 'Hazırlanıyor...' : 'Kartları Başlat',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),

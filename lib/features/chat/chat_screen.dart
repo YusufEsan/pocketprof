@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:js_interop';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:file_picker/file_picker.dart';
@@ -571,6 +572,10 @@ class _ChatScreenState extends ConsumerState<ChatScreen>
       children: [
         Scaffold(
           appBar: AppBar(
+            bottom: const PreferredSize(
+              preferredSize: Size.fromHeight(1),
+              child: Divider(height: 1, thickness: 1),
+            ),
             leading: isWide
                 ? null
                 : Builder(
@@ -670,15 +675,50 @@ class _ChatScreenState extends ConsumerState<ChatScreen>
                   );
                 },
               ),
-              // Help button with label
-              TextButton.icon(
-                icon: const Icon(Icons.help_outline, size: 20),
-                label: const Text('Nasıl Yapılır?'),
-                onPressed: () => context.go('/help'),
-                style: TextButton.styleFrom(
-                  foregroundColor: Theme.of(context).iconTheme.color,
-                ),
+              // Help button - responsive: icon only on mobile, text+icon on desktop
+              Builder(
+                builder: (context) {
+                  final isNarrow = MediaQuery.of(context).size.width < 500;
+                  if (isNarrow) {
+                    // Mobile: just icon with blue background - compact
+                    return Container(
+                      width: 36,
+                      height: 36,
+                      decoration: BoxDecoration(
+                        color: AppTheme.primary,
+                        shape: BoxShape.circle,
+                      ),
+                      child: IconButton(
+                        icon: const Icon(Icons.help_outline, color: Colors.white, size: 20),
+                        onPressed: () => context.go('/help'),
+                        tooltip: 'Nasıl Yapılır?',
+                        padding: EdgeInsets.zero,
+                        constraints: const BoxConstraints(),
+                      ),
+                    );
+                  } else {
+                    // Desktop: full button with text
+                    return ElevatedButton(
+                      onPressed: () => context.go('/help'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppTheme.primary,
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                        shape: const StadiumBorder(),
+                      ),
+                      child: const Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text('Nasıl Yapılır?'),
+                          SizedBox(width: 6),
+                          Icon(Icons.help_outline, size: 18),
+                        ],
+                      ),
+                    );
+                  }
+                },
               ),
+              const SizedBox(width: 4),
               // Home button
               IconButton(
                 icon: const Icon(Icons.home_outlined),
@@ -794,119 +834,148 @@ class _ChatScreenState extends ConsumerState<ChatScreen>
             .toList();
 
     return Drawer(
-      child: SafeArea(
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(16),
-              child: OutlinedButton.icon(
-                onPressed: () {
-                  ref.read(chatProvider.notifier).clearMessages();
-                  if (Navigator.canPop(context)) {
-                    Navigator.pop(context);
-                  }
-                },
-                icon: const Icon(Icons.add),
-                label: const Text('Yeni Sohbet'),
-                style: OutlinedButton.styleFrom(
-                  minimumSize: const Size(double.infinity, 44),
-                ),
-              ),
-            ),
-            // Search field
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: TextField(
-                decoration: InputDecoration(
-                  hintText: 'Sohbet ara...',
-                  prefixIcon: const Icon(Icons.search, size: 20),
-                  suffixIcon: _sidebarSearchQuery.isNotEmpty
-                      ? IconButton(
-                          icon: const Icon(Icons.clear, size: 20),
-                          onPressed: () {
-                            setState(() {
-                              _sidebarSearchQuery = '';
-                            });
-                          },
-                        )
-                      : null,
-                  contentPadding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 10,
+      child: Column(
+        children: [
+          Expanded(
+            child: SafeArea(
+              bottom: false,
+              child: Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: OutlinedButton.icon(
+                      onPressed: () {
+                        ref.read(chatProvider.notifier).clearMessages();
+                        if (Navigator.canPop(context)) {
+                          Navigator.pop(context);
+                        }
+                      },
+                      icon: const Icon(Icons.add),
+                      label: const Text('Yeni Sohbet'),
+                      style: OutlinedButton.styleFrom(
+                        minimumSize: const Size(double.infinity, 44),
+                      ),
+                    ),
                   ),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  isDense: true,
-                ),
-                onChanged: (value) {
-                  setState(() {
-                    _sidebarSearchQuery = value;
-                  });
-                },
-              ),
-            ),
-            const Divider(height: 1),
-            Padding(
-              padding: const EdgeInsets.all(16),
-              child: Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  'Sohbetler',
-                  style: Theme.of(context).textTheme.titleSmall,
-                ),
-              ),
-            ),
-            Expanded(
-              child: filteredSessions.isEmpty
-                  ? Center(
-                      child: Padding(
-                        padding: const EdgeInsets.all(24),
-                        child: Text(
-                          _sidebarSearchQuery.isEmpty
-                              ? 'Henüz sohbet yok'
-                              : 'Sonuç bulunamadı',
-                          style: Theme.of(context).textTheme.bodySmall,
+                  // Search field
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: TextField(
+                      decoration: InputDecoration(
+                        hintText: 'Sohbet ara...',
+                        prefixIcon: const Icon(Icons.search, size: 20),
+                        contentPadding: const EdgeInsets.symmetric(vertical: 8),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
                         ),
+                        isDense: true,
                       ),
-                    )
-                  : ListView.builder(
-                      padding: const EdgeInsets.symmetric(horizontal: 8),
-                      itemCount: filteredSessions.length,
-                      itemBuilder: (context, index) {
-                        final session = filteredSessions[index];
-                        final isActive =
-                            chatState.currentSessionId == session.id;
-                  return ListTile(
-                    dense: true,
-                    selected: isActive,
-                    selectedTileColor: AppTheme.primary.withValues(alpha: 0.1),
-                    leading: const Icon(Icons.chat_bubble_outline, size: 18),
-                    title: Text(
-                      session.title,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
+                      onChanged: (value) {
+                        setState(() {
+                          _sidebarSearchQuery = value;
+                        });
+                      },
                     ),
-                    trailing: IconButton(
-                      icon: const Icon(Icons.delete_outline, size: 18),
-                      onPressed: () => _showDeleteConfirmation(
-                        session.id,
-                        session.title,
+                  ),
+                  const SizedBox(height: 16),
+                  const Divider(height: 1),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        'Sohbetler',
+                        style: Theme.of(context).textTheme.titleSmall,
                       ),
-                      visualDensity: VisualDensity.compact,
                     ),
-                    onTap: () {
-                      ref.read(chatProvider.notifier).loadSession(session.id);
-                      if (Navigator.canPop(context)) {
-                        Navigator.pop(context);
-                      }
-                    },
-                  );
-                },
+                  ),
+                  Expanded(
+                    child: filteredSessions.isEmpty
+                        ? Center(
+                            child: Padding(
+                              padding: const EdgeInsets.all(24),
+                              child: Text(
+                                _sidebarSearchQuery.isNotEmpty
+                                    ? 'Sonuç bulunamadı'
+                                    : 'Henüz sohbet yok',
+                                style: TextStyle(color: Colors.grey[600]),
+                              ),
+                            ),
+                          )
+                        : ListView.builder(
+                            padding: EdgeInsets.zero,
+                            itemCount: filteredSessions.length,
+                            itemBuilder: (context, index) {
+                              final session = filteredSessions[index];
+                              final isActive = session.id == chatState.currentSessionId;
+                              return ListTile(
+                                dense: true,
+                                selected: isActive,
+                                selectedTileColor: AppTheme.primary.withValues(alpha: 0.1),
+                                leading: const Icon(Icons.chat_bubble_outline, size: 18),
+                                title: Text(
+                                  session.title,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                                trailing: IconButton(
+                                  icon: const Icon(Icons.delete_outline, size: 18),
+                                  onPressed: () => _showDeleteConfirmation(
+                                    session.id,
+                                    session.title,
+                                  ),
+                                  visualDensity: VisualDensity.compact,
+                                ),
+                                onTap: () {
+                                  ref.read(chatProvider.notifier).loadSession(session.id);
+                                  if (Navigator.canPop(context)) {
+                                    Navigator.pop(context);
+                                  }
+                                },
+                              );
+                            },
+                          ),
+                  ),
+                ],
               ),
             ),
-          ],
-        ),
+          ),
+          // Export/Import buttons at bottom - side by side
+          const Divider(height: 1),
+          SafeArea(
+            top: false,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: OutlinedButton.icon(
+                      onPressed: _exportChats,
+                      icon: const Icon(Icons.download, size: 16),
+                      label: const Text('Dışa Aktar', style: TextStyle(fontSize: 12)),
+                      style: OutlinedButton.styleFrom(
+                        minimumSize: const Size(0, 40),
+                        padding: const EdgeInsets.symmetric(horizontal: 8),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: OutlinedButton.icon(
+                      onPressed: _importChats,
+                      icon: const Icon(Icons.upload, size: 16),
+                      label: const Text('İçe Aktar', style: TextStyle(fontSize: 12)),
+                      style: OutlinedButton.styleFrom(
+                        minimumSize: const Size(0, 40),
+                        padding: const EdgeInsets.symmetric(horizontal: 8),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -1048,24 +1117,30 @@ class _ChatScreenState extends ConsumerState<ChatScreen>
           ),
           const Divider(height: 1),
           Padding(
-            padding: const EdgeInsets.all(12),
-            child: Column(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 18),
+            child: Row(
               children: [
-                OutlinedButton.icon(
-                  onPressed: _exportChats,
-                  icon: const Icon(Icons.download, size: 18),
-                  label: const Text('Dışa Aktar'),
-                  style: OutlinedButton.styleFrom(
-                    minimumSize: const Size(double.infinity, 40),
+                Expanded(
+                  child: OutlinedButton.icon(
+                    onPressed: _exportChats,
+                    icon: const Icon(Icons.download, size: 16),
+                    label: const Text('Dışa Aktar', style: TextStyle(fontSize: 12)),
+                    style: OutlinedButton.styleFrom(
+                      minimumSize: const Size(0, 44),
+                      padding: const EdgeInsets.symmetric(horizontal: 8),
+                    ),
                   ),
                 ),
-                const SizedBox(height: 8),
-                OutlinedButton.icon(
-                  onPressed: _importChats,
-                  icon: const Icon(Icons.upload, size: 18),
-                  label: const Text('İçe Aktar'),
-                  style: OutlinedButton.styleFrom(
-                    minimumSize: const Size(double.infinity, 40),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: OutlinedButton.icon(
+                    onPressed: _importChats,
+                    icon: const Icon(Icons.upload, size: 16),
+                    label: const Text('İçe Aktar', style: TextStyle(fontSize: 12)),
+                    style: OutlinedButton.styleFrom(
+                      minimumSize: const Size(0, 44),
+                      padding: const EdgeInsets.symmetric(horizontal: 8),
+                    ),
                   ),
                 ),
               ],
@@ -1550,7 +1625,55 @@ class _ChatScreenState extends ConsumerState<ChatScreen>
     );
   }
 
+  Widget _buildCountSelector(ChatState chatState) {
+    if (chatState.currentMode != 'quiz' && chatState.currentMode != 'flashcard') {
+      return const SizedBox.shrink();
+    }
+
+    return Container(
+      height: 46,
+      padding: const EdgeInsets.symmetric(horizontal: 4),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(22),
+        border: Border.all(color: AppTheme.divider),
+      ),
+      child: DropdownButtonHideUnderline(
+        child: DropdownButton<int>(
+          value: _selectedQuestionCount,
+          icon: const Icon(Icons.arrow_drop_down, size: 20),
+          padding: const EdgeInsets.symmetric(horizontal: 8),
+          borderRadius: BorderRadius.circular(16),
+          items: List.generate(20, (index) => index + 1)
+              .map(
+                (count) => DropdownMenuItem(
+                  value: count,
+                  child: Text(
+                    '$count',
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                      color: AppTheme.textPrimary,
+                    ),
+                  ),
+                ),
+              )
+              .toList(),
+          onChanged: (value) {
+            if (value != null) {
+              setState(() {
+                _selectedQuestionCount = value;
+              });
+            }
+          },
+        ),
+      ),
+    );
+  }
+
   Widget _buildInputArea(ChatState chatState) {
+    final isMobile = MediaQuery.of(context).size.width < 600;
+
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
@@ -1633,96 +1756,88 @@ class _ChatScreenState extends ConsumerState<ChatScreen>
               ),
             ],
 
+            // Row 1 for Mobile: PDF, Mode and Count selectors
+            if (isMobile) ...[
+              Row(
+                children: [
+                  _buildPdfButton(chatState),
+                  const SizedBox(width: 8),
+                  _buildModeSelector(chatState),
+                  if (chatState.currentMode == 'quiz' ||
+                      chatState.currentMode == 'flashcard') ...[
+                    const SizedBox(width: 8),
+                    _buildCountSelector(chatState),
+                  ],
+                ],
+              ),
+              const SizedBox(height: 12),
+            ],
+
             // Input row
             Row(
+              crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 // Text input
                 Expanded(
-                  child: TextField(
-                    controller: _inputController,
-                    decoration: InputDecoration(
-                      hintText: _pendingAttachments.isNotEmpty
-                          ? '${_pendingAttachments.length} dosya eklendi...'
-                          : 'Bir soru sor...',
-                      contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 12,
-                      ),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(24),
-                        borderSide: BorderSide(color: AppTheme.divider),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(24),
-                        borderSide: BorderSide(color: AppTheme.divider),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(24),
-                        borderSide: BorderSide(
-                          color: AppTheme.primary,
-                          width: 2,
+                  child: CallbackShortcuts(
+                    bindings: {
+                      const SingleActivator(LogicalKeyboardKey.enter): () {
+                        if (_inputController.text.trim().isNotEmpty) {
+                          _sendMessage();
+                        }
+                      },
+                    },
+                    child: TextField(
+                      controller: _inputController,
+                      maxLines: 5,
+                      minLines: 1,
+                      keyboardType: TextInputType.multiline,
+                      textInputAction: TextInputAction.send,
+                      decoration: InputDecoration(
+                        hintText: _pendingAttachments.isNotEmpty
+                            ? '${_pendingAttachments.length} dosya eklendi...'
+                            : 'Bir soru sor...',
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 12,
                         ),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(24),
+                          borderSide: BorderSide(color: AppTheme.divider),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(24),
+                          borderSide: BorderSide(color: AppTheme.divider),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(24),
+                          borderSide: BorderSide(
+                            color: AppTheme.primary,
+                            width: 2,
+                          ),
+                        ),
+                        filled: true,
+                        fillColor: AppTheme.background,
                       ),
-                      filled: true,
-                      fillColor: AppTheme.background,
+                      onSubmitted: (value) {
+                        if (value.trim().isNotEmpty) {
+                          _sendMessage();
+                        }
+                      },
+                      enabled: !chatState.isLoading,
                     ),
-                    onSubmitted: (_) => _sendMessage(),
-                    enabled: !chatState.isLoading,
                   ),
                 ),
-                const SizedBox(width: 6),
 
-                // PDF button
-                _buildPdfButton(chatState),
-
-                const SizedBox(width: 6),
-
-                // Mode selector button
-                _buildModeSelector(chatState),
-
-                // Question/Card count selector in input area
-                if (chatState.currentMode == 'quiz' ||
-                    chatState.currentMode == 'flashcard') ...[
+                if (!isMobile) ...[
                   const SizedBox(width: 6),
-                  Container(
-                    height: 44,
-                    padding: const EdgeInsets.symmetric(horizontal: 4),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(22),
-                      border: Border.all(color: AppTheme.divider),
-                    ),
-                    child: DropdownButtonHideUnderline(
-                      child: DropdownButton<int>(
-                        value: _selectedQuestionCount,
-                        icon: const Icon(Icons.arrow_drop_down, size: 20),
-                        padding: const EdgeInsets.symmetric(horizontal: 8),
-                        borderRadius: BorderRadius.circular(16),
-                        items: List.generate(20, (index) => index + 1)
-                            .map(
-                              (count) => DropdownMenuItem(
-                                value: count,
-                                child: Text(
-                                  '$count',
-                                  style: const TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.bold,
-                                    color: AppTheme.textPrimary,
-                                  ),
-                                ),
-                              ),
-                            )
-                            .toList(),
-                        onChanged: (value) {
-                          if (value != null) {
-                            setState(() {
-                              _selectedQuestionCount = value;
-                            });
-                          }
-                        },
-                      ),
-                    ),
-                  ),
+                  // PDF button
+                  _buildPdfButton(chatState),
+                  const SizedBox(width: 6),
+                  // Mode selector button
+                  _buildModeSelector(chatState),
+                  const SizedBox(width: 6),
+                  _buildCountSelector(chatState),
                 ],
 
                 const SizedBox(width: 6),
@@ -1732,8 +1847,8 @@ class _ChatScreenState extends ConsumerState<ChatScreen>
                   onTap: chatState.isLoading ? null : _sendMessage,
                   borderRadius: BorderRadius.circular(24),
                   child: Container(
-                    width: 44,
-                    height: 44,
+                    width: 46,
+                    height: 46,
                     decoration: BoxDecoration(
                       gradient: chatState.isLoading
                           ? null
@@ -1782,7 +1897,8 @@ class _ChatScreenState extends ConsumerState<ChatScreen>
       offset: const Offset(0, -120),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+        height: 46,
+        padding: const EdgeInsets.symmetric(horizontal: 14),
         decoration: BoxDecoration(
           color: hasAttachment
               ? AppTheme.primary.withValues(alpha: 0.1)
@@ -1840,7 +1956,8 @@ class _ChatScreenState extends ConsumerState<ChatScreen>
       offset: const Offset(0, -200),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+        height: 46,
+        padding: const EdgeInsets.symmetric(horizontal: 12),
         decoration: BoxDecoration(
           color: AppTheme.primary.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(24),

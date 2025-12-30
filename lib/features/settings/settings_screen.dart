@@ -164,7 +164,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             Expanded(
               child: Text(label, style: Theme.of(context).textTheme.titleSmall),
             ),
-            TextButton(onPressed: () {}, child: const Text('Nasıl alınır?')),
+            TextButton(onPressed: () => context.go('/help'), child: const Text('Nasıl alınır?')),
           ],
         ),
         const SizedBox(height: 8),

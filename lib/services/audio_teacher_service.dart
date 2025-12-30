@@ -57,17 +57,19 @@ class AudioTeacherService {
 
     _stateController.add(AudioState.loading);
 
+    // Try ElevenLabs if configured
     if (_useElevenLabs && _elevenLabsApiKey != null) {
       try {
+        debugPrint('[TTS] Speaking with ElevenLabs...');
         await _speakWithElevenLabs(text);
         return;
       } catch (e) {
-        debugPrint('ElevenLabs failed, falling back to Web Speech: $e');
-        // Fallback to Web Speech API
+        debugPrint('[TTS] ElevenLabs failed, falling back to Web Speech: $e');
       }
     }
 
     // Use Web Speech API as fallback
+    debugPrint('[TTS] Speaking with Web Speech API...');
     await _speakWithWebSpeech(text);
   }
 

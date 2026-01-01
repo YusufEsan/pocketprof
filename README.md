@@ -7,7 +7,7 @@
 
 🔗 **Canlı Demo:** [https://yusufesan.github.io/pocketprof](https://yusufesan.github.io/pocketprof)
 
----
+##
 
 **PocketProf**, öğrencilerin ders çalışma süreçlerini yapay zeka ile optimize
 eden, modern ve kullanıcı dostu bir web öğrenme asistanıdır. PDF dosyalarınızı,

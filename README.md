@@ -2,8 +2,12 @@
 
 ![PocketProf Banner](https://img.shields.io/badge/Flutter-Web-blue?style=for-the-badge&logo=flutter)
 ![PocketProf Status](https://img.shields.io/badge/Status-v2.0-gold?style=for-the-badge)
-[![PocketProf Demo](https://img.shields.io/badge/Demo-Canlı_Önizleme-success?style=for-the-badge&logo=google-chrome)](https://yusufesan.github.io/pocketprof)
+
+---
+
 🔗 **Canlı Demo:** [https://yusufesan.github.io/pocketprof](https://yusufesan.github.io/pocketprof)
+
+---
 
 **PocketProf**, öğrencilerin ders çalışma süreçlerini yapay zeka ile optimize
 eden, modern ve kullanıcı dostu bir web öğrenme asistanıdır. PDF dosyalarınızı,

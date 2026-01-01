@@ -5,14 +5,12 @@
 
 ---
 
-🔗 **Canlı Demo:** [https://yusufesan.github.io/pocketprof](https://yusufesan.github.io/pocketprof)
-
-##
-
 **PocketProf**, öğrencilerin ders çalışma süreçlerini yapay zeka ile optimize
 eden, modern ve kullanıcı dostu bir web öğrenme asistanıdır. PDF dosyalarınızı,
 görsellerinizi ve notlarınızı saniyeler içinde analiz eder; size özel sınavlar,
 hatırlatma kartları ve konu anlatımları oluşturur.
+
+🔗 **Canlı Demo:** [https://yusufesan.github.io/pocketprof](https://yusufesan.github.io/pocketprof)
 
 ---
 

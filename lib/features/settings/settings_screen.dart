@@ -29,7 +29,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   @override
   void dispose() {
     // Unfocus any active text fields to prevent DOM element errors
-    FocusScope.of(context).unfocus();
+    FocusManager.instance.primaryFocus?.unfocus();
     _openRouterController.dispose();
     _elevenLabsController.dispose();
     super.dispose();

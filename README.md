@@ -12,6 +12,12 @@ hatırlatma kartları ve konu anlatımları oluşturur.
 
 🔗 **Canlı Demo:** [https://yusufesan.github.io/pocketprof](https://yusufesan.github.io/pocketprof)
 
+## 📸 Ekran Görüntüleri
+
+| Ana Sayfa | Ayarlar | Yardım Rehberi |
+| :---: | :---: | :---: |
+| ![Ana Sayfa](screenshots/home.png) | ![Ayarlar](screenshots/settings.png) | ![Yardım Rehberi](screenshots/help.png) |
+
 ---
 
 ## ✨ Temel Özellikler

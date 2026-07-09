@@ -90,7 +90,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen>
   @override
   void dispose() {
     // Unfocus any active text fields to prevent DOM element errors
-    FocusScope.of(context).unfocus();
+    FocusManager.instance.primaryFocus?.unfocus();
     _inputController.dispose();
     _scrollController.removeListener(_onScroll);
     _scrollController.dispose();
